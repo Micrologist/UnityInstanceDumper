@@ -14,6 +14,7 @@ namespace UnityInstanceDumper
 		public static Dictionary<string, Scene> SceneDict;
 		public static Dictionary<string, ObjectComponent> CompDict;
 		public static Dictionary<int, string> TypeDict;
+		public static Dictionary<IntPtr, string> KlassNames;
 		public static DateTime StartTime;
 
 		private static IntPtr SceneManager, RuntimeTypesArray;
@@ -28,6 +29,7 @@ namespace UnityInstanceDumper
 			SceneDict = new Dictionary<string, Scene>();
 			CompDict = new Dictionary<string, ObjectComponent>();
 			TypeDict = new Dictionary<int, string>();
+			KlassNames = new Dictionary<IntPtr, string>();
 
 			if (!GetSceneManager())
 			{
@@ -70,16 +72,16 @@ namespace UnityInstanceDumper
 
 			Console.WriteLine("Found RuntimeTypes array at 0x" + RuntimeTypesArray.ToString("X16"));
 
-			int numTypes = Game.proc.ReadValue<int>(RuntimeTypesArray-0x8);
+			int numTypes = Game.proc.ReadValue<int>(RuntimeTypesArray - (Game.is64bit ? 0x8 : 0x4));
 			IntPtr typePtr = RuntimeTypesArray; 
 
 			for (int i = 0; i < numTypes; i++)
 			{
 				IntPtr type = Game.proc.ReadPointer(typePtr);
-				string name = Game.proc.ReadString(Game.proc.ReadPointer(type + 0x10), 255);
-				int id = Game.proc.ReadValue<int>(type + 0x30);
+				string name = Game.proc.ReadString(Game.proc.ReadPointer(type + (Game.is64bit ? 0x10 : 0x8)), 255);
+				int id = Game.proc.ReadValue<int>(type + (Game.is64bit ? 0x30 : 0x1C));
 				TypeDict.Add(id, name);
-				typePtr += 0x8;
+				typePtr += (Game.is64bit ? 0x8 : 0x4);
 			}
 
 			return true;
@@ -100,9 +102,11 @@ namespace UnityInstanceDumper
 			}
 			else
 			{
-				Console.WriteLine("TODO: Runtime Type Resolution on 32 bit versions");
-				Console.ReadLine();
-				return false;
+				RuntimeTypesTarget.AddSignature(3, "8B 04 85 ?? ?? ?? ?? 89 55 FC 8B 40 1C 89 45 F8 8B 43 ?? ");
+				RuntimeTypesTarget.OnFound = (f_proc, f_scanner, f_ptr) =>
+				{
+					return (Game.proc.ReadPointer(f_ptr));
+				};
 			}
 
 			var UnityPlayer = Game.proc.ModulesWow64Safe().FirstOrDefault(m => m.ModuleName == "UnityPlayer.dll");

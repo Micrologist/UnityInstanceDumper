@@ -21,12 +21,17 @@ namespace UnityInstanceDumper
 
 		string GetMonoBehaviourName()
 		{
-			string output = "???";
-			if (new DeepPointer(this.adr + (Game.is64bit ? 0x28 : 0x18), 0x0, 0x0, (Game.is64bit ? 0x48 : 0x2C), 0x0).DerefOffsets(Game.proc, out IntPtr namePtr))
+			_ = new DeepPointer(this.adr + (Game.is64bit ? 0x28 : 0x18), 0x0, 0x0, 0x0).DerefOffsets(Game.proc, out IntPtr klassPtr);
+
+			if (Game.KlassNames.ContainsKey(klassPtr))
 			{
-				output = Game.proc.ReadString(namePtr, 250);
+				return Game.KlassNames[klassPtr];
 			}
-			return output;
+
+			_ = new DeepPointer(klassPtr + (Game.is64bit ? 0x48 : 0x2C), 0x0).DerefOffsets(Game.proc, out IntPtr namePtr);
+			string klassName = Game.proc.ReadString(namePtr, 250);
+			Game.KlassNames[klassPtr] = klassName;
+			return klassName;
 		}
 
 		public override string ToString()

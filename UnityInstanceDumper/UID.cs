@@ -26,7 +26,7 @@ namespace UnityInstanceDumper
 				Console.WriteLine();
 			}
 
-			Console.WriteLine("\nFound {0} scenes containing {1} GameObjects with {2} components in {3} ms.", Game.SceneDict.Count, Game.ObjDict.Count, Game.CompDict.Count, (System.DateTime.Now - Game.StartTime).TotalMilliseconds);
+			Console.WriteLine("\nFound {0} scenes containing {1} GameObjects with {2} components in {3} ms.", Game.SceneDict.Count, Game.ObjDict.Count, Game.CompDict.Count, (System.DateTime.Now - Game.StartTime).TotalMilliseconds.ToString("0."));
 
 			string gamePath = Path.GetDirectoryName(Game.proc.MainModuleWow64Safe().FileName) + "\\";
 			using (StreamWriter writer = new StreamWriter(gamePath + "UID_ComponentDump.txt", false))
