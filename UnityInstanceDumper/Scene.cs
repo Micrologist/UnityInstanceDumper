@@ -12,12 +12,20 @@ namespace UnityInstanceDumper
 		public string path;
 		public List<GameObject> rootObjects;
 
-		public Scene(IntPtr ptr)
+		public Scene(IntPtr ptr, string name = "")
 		{
 			this.adr = ptr;
-			this.path = GetPath();
-			int extension = path.LastIndexOf(".unity");
-			this.name = extension == -1 ? path : path.Remove(extension).Split('/').Last();
+			if (!String.IsNullOrEmpty(name))
+			{
+				this.path = name;
+				this.name = name;
+			}
+			else
+			{
+				this.path = GetPath();
+				int extension = path.LastIndexOf(".unity");
+				this.name = extension == -1 ? path : path.Remove(extension).Split('/').Last();
+			}
 			this.rootObjects = GetRootObjects();
 		}
 

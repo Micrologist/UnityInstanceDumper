@@ -36,6 +36,11 @@ namespace UnityInstanceDumper
 					writer.WriteLine(kvp.Value.ToString());
 				}
 			}
+
+			foreach (GameObject go in Game.ObjDict.Values)
+			{
+				//Console.WriteLine(go.ToString());
+			}
 			Console.ReadLine();
 		}
 
