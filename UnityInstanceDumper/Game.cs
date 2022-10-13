@@ -98,6 +98,7 @@ namespace UnityInstanceDumper
 				RuntimeTypesTarget.AddSignature(3, "48 8D 0D ?? ?? ?? ?? 48 C1 E8 15 48 8B 0C C1 33 C0 48 8B 51");
 				RuntimeTypesTarget.AddSignature(3, "48 8D 15 ?? ?? ?? ?? 48 C1 E9 15 4C 8D 4C 24");
 				RuntimeTypesTarget.AddSignature(3, "48 8D 15 ?? ?? ?? ?? 48 C1 E8 15 45 33 C9 48 8B 14 C2 41 8B C1 4C 8B 42 ?? 4C 8B 52 ?? 4D 85 C0");
+				RuntimeTypesTarget.AddSignature(3, "48 8D 15 ?? ?? ?? ?? 8B 48 0C 48 C1 E9 15 48 8B 0C CA 8B 51 ?? 8B CA ");
 				RuntimeTypesTarget.OnFound = (f_proc, f_scanner, f_ptr) =>
 				{
 					return IntPtr.Add(f_ptr + 4, Game.proc.ReadValue<int>(f_ptr));

@@ -37,10 +37,6 @@ namespace UnityInstanceDumper
 				}
 			}
 
-			foreach (GameObject go in Game.ObjDict.Values)
-			{
-				//Console.WriteLine(go.ToString());
-			}
 			Console.ReadLine();
 		}
 
