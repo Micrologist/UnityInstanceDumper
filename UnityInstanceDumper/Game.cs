@@ -10,6 +10,7 @@ namespace UnityInstanceDumper
 	{
 		public static Process proc;
 		public static bool is64bit;
+		public static bool isIL2CPP;
 		public static Dictionary<string, GameObject> ObjDict;
 		public static Dictionary<string, Scene> SceneDict;
 		public static Dictionary<string, ObjectComponent> CompDict;
@@ -24,6 +25,7 @@ namespace UnityInstanceDumper
 			StartTime = System.DateTime.Now;
 			Game.proc = proc;
 			Game.is64bit = Game.proc.Is64Bit();
+			Game.isIL2CPP = CheckIL2CPP();
 
 			ObjDict = new Dictionary<string, GameObject>();
 			SceneDict = new Dictionary<string, Scene>();
@@ -149,6 +151,19 @@ namespace UnityInstanceDumper
 			if (UnityPlayer == null) return false;
 			scanner = new SignatureScanner(Game.proc, UnityPlayer.BaseAddress, UnityPlayer.ModuleMemorySize);
 			return ((SceneManager = scanner.Scan(SceneManagerTarget)) != IntPtr.Zero);
+		}
+
+		private static bool CheckIL2CPP()
+		{
+			var modules = Game.proc.ModulesWow64Safe();
+
+			foreach (var module in modules)
+			{
+				if (module.ModuleName == "GameAssembly.dll")
+					return true;
+			}
+
+			return false;
 		}
 	}
 }
